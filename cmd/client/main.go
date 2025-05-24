@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 
 	"os"
@@ -91,6 +92,9 @@ func main() {
 		defer logFile.Close()
 		log.SetOutput(logFile)
 		log.SetFlags(log.Lshortfile | log.LstdFlags)
+	} else {
+		log.SetOutput(ioutil.Discard)
+		log.SetFlags(0)
 	}
 
 	certSet, err := database.LoadDatabaseFromFile(*dbFile, *certID)

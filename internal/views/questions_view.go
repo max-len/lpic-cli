@@ -106,6 +106,7 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		textstyleStop := ""
 
 		if r.markerPosition == index {
+			log.Println("marker position is", r.markerPosition, "index is", index)
 			textstyleStart = underlinedStartStyle
 			textstyleStop = underlinedStopStyle
 		}
