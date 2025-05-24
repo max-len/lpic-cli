@@ -1,0 +1,51 @@
+# File: lpic2_201_450_practice_tests.yaml
+# Certification: LPIC-2 Certified Linux Engineer 201-450 Practice Exam Questions
+certification_id: "lpic2-201-450"
+certification_name: "LPIC-2 Certified Linux Engineer 201-450 Practice Exam Questions"
+certification_description: "LPIC-2 Certified Linux Engineer 201-450 Practice Exam Questions"
+urls:
+  - title: "Full Length Test Sets"
+    description: "Full Length Practice Tests for LPIC-2 201-450"
+    urls:
+      full_test_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=1&test_id=3706"
+      full_test_2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=2&test_id=3706"
+      full_test_3: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=3&test_id=3706"
+      full_test_4: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=4&test_id=3706"
+      full_test_5: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=5&test_id=3706"
+      full_test_6: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=6&test_id=3706"
+      full_test_7: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=7&test_id=3706"
+      full_test_8: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=8&test_id=3706"
+      full_test_9: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=9&test_id=3706"
+  - title: "1. MISC Questions"
+    description: "Practice Tests for MISC Questions"
+    urls:
+      misc_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=1&test_id=3706"
+  - title: "2. Capacity Planning"
+    description: "Practice Tests for Capacity Planning"
+    urls:
+      capacity_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5497&testset=1&test_id=3706"
+  - title: "3. Kernel Linux"
+    description: "Practice Tests for Kernel Linux"
+    urls:
+      kernel_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5498&testset=1&test_id=3706"
+      kernel_2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5498&testset=2&test_id=3706"
+  - title: "4. System Startup"
+    description: "Practice Tests for System Startup"
+    urls:
+      startup_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5499&testset=1&test_id=3706"
+  - title: "5. Filesystem and Devices"
+    description: "Practice Tests for Filesystem and Devices"
+    urls:
+      devices_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5500&testset=1&test_id=3706"
+  - title: "6. Network Configuration"
+    description: "Practice Tests for Network Configuration"
+    urls:
+      networking_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5501&testset=1&test_id=3706"
+  - title: "7. Advanced Storage Device Administration"
+    description: "Practice Tests for Advanced Storage Device Administration"
+    urls:
+      storage_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5502&testset=1&test_id=3706"
+  - title: "8. System Maintenance"
+    description: "Practice Tests for System Maintenance"
+    urls:
+      maintenance_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5503&testset=1&test_id=3706"

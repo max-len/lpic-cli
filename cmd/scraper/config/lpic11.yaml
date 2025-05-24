@@ -1,0 +1,105 @@
+# Sample YAML configuration for CertificationSetConfig
+certification_id: "lpic1-101-500"
+certification_name: "LPIC-1 101-500"
+certification_description: "Linux Administrator"
+urls:
+  - title: "Full Length Tests"
+    description: "Full Length Test for LPIC-101-500"
+    urls:
+      full_test_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=1&test_id=3568"
+      full_test_2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=2&test_id=3568"
+      full_test_3: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=3&test_id=3568"
+      full_test_4: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=4&test_id=3568"
+      full_test_5: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=5&test_id=3568"
+      full_test_6: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=6&test_id=3568"
+      full_test_7: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=7&test_id=3568"
+      full_test_8: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=8&test_id=3568"
+      full_test_9: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=9&test_id=3568"
+  - title: "Miscellaneous Questions"
+    description: "Miscellaneous Questions for LPIC-1-1"
+    urls:
+      misc1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=1&test_id=3568"
+      misc2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=2&test_id=3568"
+      misc2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=3&test_id=3568"
+      misc3: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=4&test_id=3568"
+      misc4: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=5&test_id=3568"
+      misc5: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=6&test_id=3568"
+      # Exploring command line tools
+  - title: "Exploring command line tools"
+    description: "Exploring command line tools for LPIC-1-1"
+    urls:
+      cmdtools1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3326&testset=1&test_id=3568"
+      cmdtols2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3326&testset=2&test_id=3568"
+      # Manageing software and processes
+  - title: "Managing software and processes"
+    description: "Managing software and processes for LPIC-1-1"
+    urls:
+      software_and_processes1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3327&testset=1&test_id=3568"
+
+      # Configuring Hardware
+  - title: "Configuring Hardware"
+    description: "Configuring hardware for LPIC-1-1"
+    urls:
+      hardware1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3328&testset=1&test_id=3568"
+      hardware2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3328&testset=2&test_id=3568"
+
+      # Managing files
+  - title: " Managing files"
+    description: "Managing files for LPIC-1-1"
+    urls:
+      files1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3329&testset=1&test_id=3568"
+
+      # Booting and vertiualizing linux
+  - title: "Booting and virtualizing Linux"
+    description: "Booting and virtualizing Linux for LPIC-1-1"
+    urls:
+      booting_virt: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3330&testset=1&test_id=3568"
+
+      # Managing Software
+  - title: "Managing Software"
+    description: "Managing software for LPIC-1-1"
+    urls:
+      software: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3343&testset=1&test_id=3568"
+
+      # Booting Linux and Editing Files
+  - title: "Booting Linux and Editing Files"
+    description: "Booting Linux and Editing Files for LPIC-1-1"
+    urls:
+      booting_editing: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3344&testset=1&test_id=3568"
+
+      # Devices / Linux Filesystem
+  - title: "Devices / Linux Filesystem"
+    description: "Devices / Linux Filesystem for LPIC-1-1"
+    urls:
+      devices_lfs: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5167&testset=1&test_id=3568"
+
+      # Linux installation package management
+  - title: "Linux installation package management"
+    description: "Linux installation package management for LPIC-1-1"
+    urls:
+      package_management: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=383&testset=1&test_id=3568"
+
+      # GNU and Unix Commands
+  - title: "GNU and Unix Commands"  
+    description: "GNU and Unix Commands for LPIC-1-1"
+    urls:
+      gnu_commands_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=384&testset=1&test_id=3568"
+      gnu_commands_2 : "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=384&testset=2&test_id=3568"
+
+      # System Architecture
+  - title: "System Architecture"
+    description: "System Architecture for LPIC-1-1"
+    urls:
+      system_architecture: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=382&testset=1&test_id=3568"
+
+      # Devices / Linux filesystem hierarchy
+  - title: "Devices / Linux filesystem hierarchy"
+    description: "Devices / Linux filesystem hierarchy for LPIC-1-1"
+    urls:
+      devices_lfh: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5169&testset=1&test_id=3568"
+
+      # Linux Devices Filesystem FHS
+  - title: "Linux Devices Filesystem FHS"
+    description: "Linux Devices Filesystem FHS for LPIC-1-1"
+    urls:
+      fhs_ldf: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5170&testset=1&test_id=3568"

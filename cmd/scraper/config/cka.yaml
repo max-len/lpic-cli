@@ -1,0 +1,72 @@
+# File: cka_practice_tests.yaml
+# Certification: Certified Kubernetes Administrator (CKA) Practice Exam
+certification_id: "cka"
+certification_name: "Certified Kubernetes Administrator (CKA) Practice Exam"
+certification_description: "Certified Kubernetes Administrator (CKA) Practice Exam"
+urls:
+  - title: "Full Length Test Sets"
+    description: "Full Length Practice Tests for Certified Kubernetes Administrator (CKA)"
+    urls:
+      full_test_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=fulllength&testset=1&test_id=7035"
+      full_test_2: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=fulllength&testset=2&test_id=7035"
+  - title: "1. Cluster Upgrade"
+    description: "Practice Tests for Cluster Upgrade"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4618&testset=1&test_id=7035"
+  - title: "2. Workload & Scheduling"
+    description: "Practice Tests for Workload & Scheduling"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4619&testset=1&test_id=7035"
+  - title: "3. Networking & Services"
+    description: "Practice Tests for Networking & Services"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4620&testset=1&test_id=7035"
+  - title: "4. Cluster Configuration"
+    description: "Practice Tests for Cluster Configuration"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4621&testset=1&test_id=7035"
+  - title: "5. Storage"
+    description: "Practice Tests for Storage"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=37&testset=1&test_id=7035"
+  - title: "6. Formatting Output with Custom Columns JSONPATH and Selector"
+    description: "Practice Tests for Formatting Output with Custom Columns JSONPATH and Selector"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4622&testset=1&test_id=7035"
+  - title: "7. Backup & Restore"
+    description: "Practice Tests for Backup & Restore"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4623&testset=1&test_id=7035"
+  - title: "8. Logging & Monitoring"
+    description: "Practice Tests for Logging & Monitoring"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4624&testset=1&test_id=7035"
+  - title: "9. Troubleshooting"
+    description: "Practice Tests for Troubleshooting"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=33&testset=1&test_id=7035"
+  - title: "10. Security"
+    description: "Practice Tests for Security"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=38&testset=1&test_id=7035"
+  - title: "11. Formatting Output with Custom Columns JSPNPATH and Selector"
+    description: "Practice Tests for Formatting Output with Custom Columns JSPNPATH and Selector"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4625&testset=1&test_id=7035"
+  - title: "12. Debugging"
+    description: "Practice Tests for Debugging"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4455&testset=1&test_id=7035"
+  - title: "13. Cluster Overview"
+    description: "Practice Tests for Cluster Overview"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4626&testset=1&test_id=7035"
+  - title: "14. Formatting Output"
+    description: "Practice Tests for Formatting Output"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=4627&testset=1&test_id=7035"
+  - title: "15. MISC Questions"
+    description: "Practice Tests for MISC Questions"
+    urls:
+      test_set_1: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=1&test_id=7035"
+      test_set_2: "https://{{ .BaseUrl }}?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=2&test_id=7035"

@@ -1,0 +1,87 @@
+# Sample YAML configuration for CertificationSetConfig
+certification_id: "lpic1-102-500"
+certification_name: "LPIC-1 102-500"
+certification_description: "LPIC-1 Certified Linux Administrator 102-500 Practice Exam"
+urls:
+  - title: "Full Length Tests"
+    description: "Full Length Practice Tests for LPIC-1 102-500"
+    urls:
+      full_test_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=1&test_id=3570"
+      full_test_2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=2&test_id=3570"
+      full_test_3: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=3&test_id=3570"
+      full_test_4: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=4&test_id=3570"
+      full_test_5: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=5&test_id=3570"
+      full_test_6: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=6&test_id=3570"
+      full_test_7: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=7&test_id=3570"
+      full_test_8: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=8&test_id=3570"
+      full_test_9: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=fulllength&testset=9&test_id=3570"
+  - title: "1. MISC Questions"
+    description: "Practice Tests for MISC Questions"
+    urls:
+      misc_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=733&testset=1&test_id=3570"
+  - title: "2. Configuring the GUI Localization and Printing"
+    description: "Practice Tests for Configuring the GUI Localization and Printing"
+    urls:
+      conf_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3345&testset=1&test_id=3570"
+  - title: "3. Administering the System"
+    description: "Practice Tests for Administering the System"
+    urls:
+      admin_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3346&testset=1&test_id=3570"
+      admin_2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3346&testset=2&test_id=3570"
+  - title: "4. Configuring Basic Networking"
+    description: "Practice Tests for Configuring Basic Networking"
+    urls:
+      networking_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3347&testset=1&test_id=3570"
+  - title: "5. Writing Scripts"
+    description: "Practice Tests for Writing Scripts"
+    urls:
+      scripts_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3348&testset=1&test_id=3570"
+  - title: "6. Securing Your System"
+    description: "Practice Tests for Securing Your System"
+    urls:
+      security_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3349&testset=1&test_id=3570"
+  - title: "7. Localization"
+    description: "Practice Tests for Localization"
+    urls:
+      local_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=343&testset=1&test_id=3570"
+  - title: "8. Configuring the X Window System"
+    description: "Practice Tests for Configuring the X Window System"
+    urls:
+      xwindow_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3368&testset=1&test_id=3570"
+  - title: "9. and Printing"
+    description: "Practice Tests for and Printing"
+    urls:
+      printing_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3369&testset=1&test_id=3570"
+  - title: "10. Configuring Email"
+    description: "Practice Tests for Configuring Email"
+    urls:
+      email_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3370&testset=1&test_id=3570"
+  - title: "11. and Using Databases"
+    description: "Practice Tests for and Using Databases"
+    urls:
+      databases_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3371&testset=1&test_id=3570"
+  - title: "12. Administrative Tasks"
+    description: "Practice Tests for Administrative Tasks"
+    urls:
+      admin_tasks_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3413&testset=1&test_id=3570"
+      admin_tasks_2: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=3413&testset=2&test_id=3570"
+  - title: "13. Essential System Services"
+    description: "Practice Tests for Essential System Services"
+    urls:
+      ess_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=399&testset=1&test_id=3570"
+  - title: "14. Networking Fundamentals"
+    description: "Practice Tests for Networking Fundamentals"
+    urls:
+      networking_fundamentals_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=51&testset=1&test_id=3570"
+  - title: "15. Shells and Shell Scripting"
+    description: "Practice Tests for Shells and Shell Scripting"
+    urls:
+      shellscripting_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=5168&testset=1&test_id=3570"
+  - title: "16. User Interfaces and Desktops"
+    description: "Practice Tests for User Interfaces and Desktops"
+    urls:
+      ui_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=397&testset=1&test_id=3570"
+  - title: "17. Security"
+    description: "Practice Tests for Security"
+    urls:
+      security_1: "https://{{ .BaseUrl }}/index.php?route=account/test/on&mode=practice&type=topicwise&topic=38&testset=1&test_id=3570"
