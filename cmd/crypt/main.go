@@ -126,9 +126,10 @@ func loadDataAndEncrypt(key []byte, outputFile string) {
 	// Fetch the CertificationSet from MongoDB
 	collection := mongoClient.Database("certificationDB").Collection("questions")
 	var certificationSets []types.CertificationSet
-	var certificationSet types.CertificationSet
 
 	for _, certID := range certIds {
+		var certificationSet types.CertificationSet
+
 		fmt.Println("Fetching CertificationSet with ID: ", certID)
 		err := collection.FindOne(context.TODO(), bson.M{"_id": certID}).Decode(&certificationSet)
 		if err != nil {

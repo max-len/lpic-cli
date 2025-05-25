@@ -102,6 +102,8 @@ func main() {
 		log.Fatalf("failed to load certification set: %v", err)
 	}
 
+	log.Printf("Loaded certification set: %s (%s) %d questions \n", certSet.CertificationName, certSet.CertificationID, len(certSet.Questions))
+
 	if *listCerts {
 		fmt.Println("Available certifications:")
 		certs, err := database.LoadFullData(*dbFile)
@@ -143,6 +145,18 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to fetch question: %v", err)
 		}
+
+		// create a fake testset for random questions
+		testSet := types.Testset{
+			TestsetID:    "random",
+			TestsetName:  "Random Questions",
+			QuestionsIds: make([]int, 0),
+		}
+		for _, question := range questions {
+			testSet.QuestionsIds = append(testSet.QuestionsIds, question.ID)
+		}
+		certSet.Testsets["random"] = testSet
+		testSetId = &testSet.TestsetID
 	} else {
 		questions, err = certSet.GetQuestionsForTestset(*testSetId, *filterCorrect, formerQuestionStates)
 		if err != nil {
