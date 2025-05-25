@@ -82,11 +82,11 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		radioButtonChecked = "\u25c9"   // Checked.
 	}
 
-	underlinedStartStyle := "[::u]"
+	underlinedStartStyle := "[yellow::u]"
 	underlinedStopStyle := "[-:-:-:-]"
 
-	correctAnswerStyle := "[yellow:green]"
-	incorrectAnswerStyle := "[yellow:red]"
+	correctAnswerStyle := "[:green]"
+	incorrectAnswerStyle := "[:red]"
 
 	viewExplaination := false
 
@@ -104,11 +104,13 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 
 		textstyleStart := ""
 		textstyleStop := ""
+		prefix := " "
 
 		if r.markerPosition == index {
 			log.Println("marker position is", r.markerPosition, "index is", index)
 			textstyleStart = underlinedStartStyle
 			textstyleStop = underlinedStopStyle
+			prefix = "-"
 		}
 
 		if r.isOptionMarked(index) {
@@ -121,7 +123,7 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 			radioButton = radioButtonChecked
 		}
 
-		line := fmt.Sprintf(`%s   %s%s%s%s`, radioButton, answerStyle, textstyleStart, option.Text, textstyleStop)
+		line := fmt.Sprintf(`%s %s%s%s%s%s`, radioButton, prefix, answerStyle, textstyleStart, option.Text, textstyleStop)
 		tview.Print(screen, line, x, y+index, width, tview.AlignLeft, tcell.ColorYellow)
 	}
 
