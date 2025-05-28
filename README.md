@@ -1,6 +1,23 @@
 # Warning
 This code was generated with the help of an AI agent and is intended primarily for testing purposes. Most of the generated code is unmodified and may not be production-ready.
 
+## App usage
+
+### CLI Keystrokes & Navigation
+The lpic-learner CLI app provides an interactive terminal interface for practicing LPIC exam questions. After starting the client, you can use the following keystrokes to navigate and interact with the questions:
+
+- **q**: Quit the application
+- **n**: Go to the next question
+- **p**: Go to the previous question
+- **Space** / **Enter**: Select or mark the current answer option
+- **s**: Show the solution (mark all answers and show explanation)
+- **e**: Show the explanation for the current question
+- **Up/Down arrows**: Navigate between answer options
+- **t**: Show statistics
+- **h**: Show help
+
+You can also use the mouse to select answers and interact with the UI.
+
 ## Features
 - **LPIC Exam Preparation:** Practice with real-like questions for LPIC certifications (LPIC-1, LPIC-2, CKA, etc.).
 - **Question Scraper:** Scrape and collect certification questions from web sources using a configurable YAML file.
