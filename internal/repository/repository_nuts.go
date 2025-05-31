@@ -76,6 +76,7 @@ func (n *NutsQuestionRepository) UpsertQuestion(ctx context.Context, question *t
 		QuestionID:    question.ID,
 		MarkedAnswers: markedAnswers,
 		AnsweredState: question.AnsweredState,
+		Important:     question.GetIsImportant(),
 	}
 
 	return n.db.Update(func(tx *nutsdb.Tx) error {

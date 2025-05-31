@@ -4,4 +4,5 @@ type QuestionStateDB struct {
 	QuestionID    int
 	MarkedAnswers []string
 	AnsweredState AnsweredState
+	Important     bool
 }

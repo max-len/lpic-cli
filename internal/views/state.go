@@ -53,8 +53,8 @@ func QuestionStateOverview(certSet []*types.Question, tview *tview.TextView, cur
 
 	precentageCorrect := float64(CorrectAnswered) / float64(questionsLenght) * 100
 	precentageIncorrect := float64(IncorrectAnswered) / float64(questionsLenght) * 100
-	questionCount += fmt.Sprintf("Correct Testset: %.0f%%\nIncorrect: %0.0f%%\n", precentageCorrect, precentageIncorrect)
-	questionCount = fmt.Sprintf("%s\n\n[red]Incorrect[-]: %d ( %.0f%%)\n[green]Correct[-]: %d ( %.0f%%)\n[white]Unknown[-]: %d\n\n", questionCount, incorrect, precentageIncorrect, correct, precentageCorrect, unknown)
+	percentageUnknown := float64(unknown) / float64(questionsLenght) * 100
+	questionCount = fmt.Sprintf("%s\n\n[red]Incorrect[-]: %d ( %.0f%%)\n[green]Correct[-]: %d ( %.0f%%)\n[white]Unknown[-]: %d ( %.0f%%)\n\n", questionCount, incorrect, precentageIncorrect, correct, precentageCorrect, unknown, percentageUnknown)
 
 	tview.SetText(questionCount).SetDynamicColors(true)
 }

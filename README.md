@@ -16,6 +16,12 @@ The lpic-learner CLI app provides an interactive terminal interface for practici
 - **t**: Show statistics
 - **h**: Show help
 
+todo: 
+- switching from tview to lipgloss
+- add a key to mark a question as important, to bring it back later
+- keystroke to jump to the first unanswered question
+
+
 You can also use the mouse to select answers and interact with the UI.
 
 ## Features

@@ -6,6 +6,7 @@ type Question struct {
 	Answers       []*Answer     `bson:"answers"`
 	Explanation   string        `bson:"explanation,omitempty"`
 	AnsweredState AnsweredState `bson:"answeredState,omitempty"`
+	isImportant   bool          `bson:"important,omitempty"`
 }
 
 func (q *Question) GetAnsweredOptions() []*Answer {
@@ -34,4 +35,13 @@ func (q *Question) IsSingleAnswer() bool {
 func (question *Question) SetAnsweredState(AnsweredState AnsweredState) *Question {
 	question.AnsweredState = AnsweredState
 	return question
+}
+
+func (question *Question) SetIsImportant(isImportant bool) *Question {
+	question.isImportant = isImportant
+	return question
+}
+
+func (question *Question) GetIsImportant() bool {
+	return question.isImportant
 }

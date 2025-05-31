@@ -30,6 +30,7 @@ func (c *CertificationSet) GetQuestionsForTestset(id string, filterCorrect bool,
 		for _, questionState := range stateDB {
 			if question.ID == questionState.QuestionID {
 				question.AnsweredState = questionState.AnsweredState
+				question.SetIsImportant(questionState.Important)
 				for _, answer := range question.Answers {
 					for _, markedAnswer := range questionState.MarkedAnswers {
 						if answer.AnswerID == markedAnswer {

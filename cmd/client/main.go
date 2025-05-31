@@ -45,6 +45,7 @@ func main() {
 	listCerts := flag.Bool("listCerts", false, "List all available certifications in the json file")
 	listTestSets := flag.Bool("listTestSets", false, "List all available test sets in the json file")
 	filterCorrect := flag.Bool("filterCorrect", false, "Filter correct answers")
+	onlyImportant := flag.Bool("onlyImportant", false, "Only show important questions")
 	withLogfile := flag.Bool("withLogfile", false, "Enable logging to a file in /tmp/lpic-learner.log")
 	help := flag.Bool("help", false, "Show help")
 	h := flag.Bool("h", false, "Show help")
@@ -69,6 +70,8 @@ func main() {
 		fmt.Println("        If this option is set, the -testsetId option is ignored")
 		fmt.Println("  -filterCorrect")
 		fmt.Println("        Filter correct answers")
+		fmt.Println("  -onlyImportant")
+		fmt.Println("        Only show important questions")
 		fmt.Println("  -withLogfile")
 		fmt.Println("        Enable logging to a file in /tmp/lpic-learner.log")
 		fmt.Println("        If this option is set, the log file is created in /tmp/lpic-learner.log")
@@ -164,6 +167,21 @@ func main() {
 		}
 	}
 
+	if *onlyImportant {
+		// Filter only important questions
+		filteredQuestions := make([]*types.Question, 0)
+		for _, question := range questions {
+			if question.GetIsImportant() {
+				filteredQuestions = append(filteredQuestions, question)
+			}
+		}
+		if len(filteredQuestions) == 0 {
+			log.Println("No important questions found, using all questions")
+			filteredQuestions = questions
+		}
+		questions = filteredQuestions
+	}
+
 	testset := certSet.Testsets[*testSetId]
 	session := types.NewCertificationSession(&testset)
 
@@ -173,7 +191,6 @@ func main() {
 	}
 
 	questionTextView := tview.NewTextView().SetText(question.Text).SetDynamicColors(true)
-
 	explainationView := tview.NewTextView().SetText("").SetDynamicColors(true)
 
 	flexViewflex := tview.NewFlex().SetDirection(tview.FlexRow)
@@ -307,8 +324,12 @@ func main() {
 			"Space: Mark answer\n" +
 			"n/right: Next question\n" +
 			"p/left: Previous question\n" +
+			"up: Move marker up\n" +
+			"down: Move marker down\n" +
 			"t: Show statistics\n" +
 			"e: Show explanation\n" +
+			"v: Mark question as important\n" +
+			"b: Unmark question as important\n" +
 			"h: Show help\n" +
 			"s: Solve question\n"
 		modal = tview.NewModal().
@@ -332,6 +353,24 @@ func main() {
 				app.Stop()
 			case ' ':
 				markAnswer()
+			case 'v':
+				question.SetIsImportant(true)
+				rep.UpsertQuestion(ctx, question)
+
+				modal := tview.NewModal().
+					SetText("saved as important question").
+					AddButtons([]string{"Ok"}).
+					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+						if err := app.SetRoot(flex, false).EnableMouse(true).Run(); err != nil {
+							panic(err)
+						}
+					})
+				if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
+					panic(err)
+				}
+			case 'b':
+				question.SetIsImportant(false)
+				rep.UpsertQuestion(ctx, question)
 			case 'h':
 				showHelp()
 			case 'n':
