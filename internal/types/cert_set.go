@@ -48,11 +48,16 @@ func (c *CertificationSet) GetQuestionsForTestset(id string, filterCorrect bool,
 		}
 		questions := c.CertificationSetMapToSlice()
 
+		var tmpQuestions []*Question
 		for _, question := range questions {
 			markedAnswer(question, stateDB)
+			if filterCorrect && question.AnsweredState == AnsweredTrue {
+				continue
+			}
+			tmpQuestions = append(tmpQuestions, question)
 		}
 
-		return questions, nil
+		return tmpQuestions, nil
 	}
 
 	if len(testset.QuestionsIds) == 0 {
@@ -83,7 +88,6 @@ func (c *CertificationSet) GetQuestionsForTestset(id string, filterCorrect bool,
 
 		if filterCorrect && question.AnsweredState == AnsweredTrue {
 			continue
-
 		}
 
 		questions = append(questions, question)
