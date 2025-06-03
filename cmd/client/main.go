@@ -316,6 +316,12 @@ func main() {
 		rep.UpsertQuestion(ctx, question)
 	}
 
+	setFirstView := func() {
+		if err := app.SetRoot(flex, false).EnableMouse(true).Run(); err != nil {
+			panic(err)
+		}
+	}
+
 	showHelp := func() {
 		helpText := "Help:\n" +
 
@@ -330,6 +336,7 @@ func main() {
 			"e: Show explanation\n" +
 			"v: Mark question as important\n" +
 			"b: Unmark question as important\n" +
+			"u: reset all questions in a testset\n" +
 			"h: Show help\n" +
 			"s: Solve question\n"
 		modal = tview.NewModal().
@@ -342,6 +349,14 @@ func main() {
 			})
 		if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
 			panic(err)
+		}
+	}
+
+	resetTestset := func() {
+		for _, question := range questions {
+
+			question.ResetAnsweredState()
+			rep.UpsertQuestion(ctx, question)
 		}
 	}
 
@@ -361,9 +376,7 @@ func main() {
 					SetText("saved as important question").
 					AddButtons([]string{"Ok"}).
 					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-						if err := app.SetRoot(flex, false).EnableMouse(true).Run(); err != nil {
-							panic(err)
-						}
+						setFirstView()
 					})
 				if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
 					panic(err)
@@ -373,6 +386,22 @@ func main() {
 				rep.UpsertQuestion(ctx, question)
 			case 'h':
 				showHelp()
+			case 'u':
+				modal := tview.NewModal().
+					SetText("saved as important question").
+					AddButtons([]string{"Cancel", "Back", "Reset"}).
+					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+						if buttonLabel == "Reset" {
+							log.Println("Resetting testset")
+							resetTestset()
+						}
+						views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
+						setFirstView()
+					})
+				if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
+					panic(err)
+				}
+
 			case 'n':
 				nextQuestion()
 			case 'p':

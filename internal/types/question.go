@@ -45,3 +45,10 @@ func (question *Question) SetIsImportant(isImportant bool) *Question {
 func (question *Question) GetIsImportant() bool {
 	return question.isImportant
 }
+
+func (question *Question) ResetAnsweredState() {
+	question.AnsweredState = AnsweredUnknow
+	for _, answer := range question.Answers {
+		answer.SetIsMarked(false)
+	}
+}
