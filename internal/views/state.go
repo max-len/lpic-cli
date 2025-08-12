@@ -23,7 +23,7 @@ func QuestionStateOverview(certSet []*types.Question, tview *tview.TextView, cur
 			continue
 		}
 		switch question.AnsweredState {
-		case types.AnsweredUnknow:
+		case types.AnsweredUnknown:
 			questionCount = fmt.Sprintf("%s %d ", questionCount, index+1)
 			unknown++
 		case types.AnsweredTrue:

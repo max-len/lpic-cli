@@ -9,7 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-type QuestionsView struct {
+type QuestionsViewModern struct {
 	*tview.Box
 	explainationView *tview.TextView
 	questionTextView *tview.TextView
@@ -17,14 +17,14 @@ type QuestionsView struct {
 	currentQuestion  *types.Question
 }
 
-func (r *QuestionsView) IncreaseMarkerPosition() {
+func (r *QuestionsViewModern) IncreaseMarkerPosition() {
 	r.markerPosition++
 	if r.markerPosition >= r.GetOptionsLenght() {
 		r.markerPosition = r.GetOptionsLenght() - 1
 	}
 }
 
-func (r *QuestionsView) DecreaseMarkerPosition() {
+func (r *QuestionsViewModern) DecreaseMarkerPosition() {
 	r.markerPosition--
 	if r.markerPosition < 0 {
 		r.markerPosition = 0
@@ -32,8 +32,8 @@ func (r *QuestionsView) DecreaseMarkerPosition() {
 }
 
 // NewRadioButtons returns a new radio button primitive.
-func NewQuestionsView(answers []*types.Answer, questionTextView *tview.TextView, explainationView *tview.TextView) *QuestionsView {
-	return &QuestionsView{
+func NewQuestionsViewModern(answers []*types.Answer, questionTextView *tview.TextView, explainationView *tview.TextView) *QuestionsViewModern {
+	return &QuestionsViewModern{
 		Box:              tview.NewBox(),
 		questionTextView: questionTextView,
 		explainationView: explainationView,
@@ -41,18 +41,18 @@ func NewQuestionsView(answers []*types.Answer, questionTextView *tview.TextView,
 	}
 }
 
-func (r *QuestionsView) SetQuestion(question *types.Question) {
+func (r *QuestionsViewModern) SetQuestion(question *types.Question) {
 	r.markerPosition = 0
 	r.explainationView.SetText("")
 	r.currentQuestion = question
 	r.questionTextView.SetText(fmt.Sprintf("[white]%s[-]", question.Text))
 }
 
-func (r *QuestionsView) GetCurrentQuestion() *types.Question {
+func (r *QuestionsViewModern) GetCurrentQuestion() *types.Question {
 	return r.currentQuestion
 }
 
-func (r *QuestionsView) isMultiAnswer() bool {
+func (r *QuestionsViewModern) isMultiAnswer() bool {
 	// check if the question has multiple answers
 	multipleAnswers := false
 	countCorrectAnswers := 0
@@ -69,7 +69,7 @@ func (r *QuestionsView) isMultiAnswer() bool {
 }
 
 // Draw draws this primitive onto the screen.
-func (r *QuestionsView) Draw(screen tcell.Screen) {
+func (r *QuestionsViewModern) Draw(screen tcell.Screen) {
 	r.Box.DrawForSubclass(screen, r)
 	x, y, width, height := r.GetInnerRect()
 
@@ -132,7 +132,7 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 	}
 }
 
-func (r *QuestionsView) indexToAnswerID(index int) string {
+func (r *QuestionsViewModern) indexToAnswerID(index int) string {
 	if index < 0 || index >= len(r.currentQuestion.Answers) {
 		return ""
 	}
@@ -140,11 +140,11 @@ func (r *QuestionsView) indexToAnswerID(index int) string {
 }
 
 // check if the current option is in markedOptions
-func (r *QuestionsView) isOptionMarked(index int) bool {
+func (r *QuestionsViewModern) isOptionMarked(index int) bool {
 	return r.currentQuestion.Answers[index].GetIsMarked()
 }
 
-func (r *QuestionsView) GetCurrentOptions() []*types.Answer {
+func (r *QuestionsViewModern) GetCurrentOptions() []*types.Answer {
 	var answers []*types.Answer
 	for _, v := range r.currentQuestion.Answers {
 		if v.GetIsMarked() {
@@ -154,19 +154,19 @@ func (r *QuestionsView) GetCurrentOptions() []*types.Answer {
 	return answers
 }
 
-func (r *QuestionsView) getOptionByIndex(index int) *types.Answer {
+func (r *QuestionsViewModern) getOptionByIndex(index int) *types.Answer {
 	if index < 0 || index >= len(r.currentQuestion.Answers) {
 		return nil
 	}
 	return r.currentQuestion.Answers[index]
 }
 
-func (r *QuestionsView) ToggleCurrentMarkedOption() types.AnsweredState {
+func (r *QuestionsViewModern) ToggleCurrentMarkedOption() types.AnsweredState {
 	return r.ToggleMarkedOption(r.markerPosition)
 }
 
 // toggle the current option and return true if the option is correct
-func (r *QuestionsView) ToggleMarkedOption(index int) types.AnsweredState {
+func (r *QuestionsViewModern) ToggleMarkedOption(index int) types.AnsweredState {
 	if r.isOptionMarked(index) {
 		r.removeCurrentOption(index)
 	} else {
@@ -195,7 +195,7 @@ func (r *QuestionsView) ToggleMarkedOption(index int) types.AnsweredState {
 	return types.AnsweredUnknown
 }
 
-func (r *QuestionsView) checkAllCorrectMarked() bool {
+func (r *QuestionsViewModern) checkAllCorrectMarked() bool {
 	for _, answer := range r.currentQuestion.Answers {
 		if answer.IsCorrect && !answer.GetIsMarked() {
 			return false
@@ -207,7 +207,7 @@ func (r *QuestionsView) checkAllCorrectMarked() bool {
 }
 
 // MouseHandler returns the mouse handler for this primitive.
-func (r *QuestionsView) MouseHandler() func(action tview.MouseAction, event *tcell.EventMouse, setFocus func(p tview.Primitive)) (consumed bool, capture tview.Primitive) {
+func (r *QuestionsViewModern) MouseHandler() func(action tview.MouseAction, event *tcell.EventMouse, setFocus func(p tview.Primitive)) (consumed bool, capture tview.Primitive) {
 	return r.WrapMouseHandler(func(action tview.MouseAction, event *tcell.EventMouse, setFocus func(p tview.Primitive)) (consumed bool, capture tview.Primitive) {
 		x, y := event.Position()
 		_, rectY, _, _ := r.GetInnerRect()
@@ -229,7 +229,7 @@ func (r *QuestionsView) MouseHandler() func(action tview.MouseAction, event *tce
 }
 
 // remove current option from markedOptions
-func (r *QuestionsView) removeCurrentOption(index int) {
+func (r *QuestionsViewModern) removeCurrentOption(index int) {
 	for i, v := range r.currentQuestion.Answers {
 		if v.AnswerID == r.indexToAnswerID(index) {
 			r.currentQuestion.Answers[i].SetIsMarked(false)
@@ -237,7 +237,7 @@ func (r *QuestionsView) removeCurrentOption(index int) {
 	}
 }
 
-func (r *QuestionsView) ShowExplanation() {
+func (r *QuestionsViewModern) ShowExplanation() {
 	if r.currentQuestion.Explanation != "" {
 		r.explainationView.SetText(r.currentQuestion.Explanation)
 	} else {
@@ -246,7 +246,7 @@ func (r *QuestionsView) ShowExplanation() {
 	log.Println("Show explanation")
 }
 
-func (r *QuestionsView) GetOptionsLenght() int {
+func (r *QuestionsViewModern) GetOptionsLenght() int {
 	if r.currentQuestion == nil {
 		return 0
 	}

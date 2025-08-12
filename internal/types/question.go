@@ -47,7 +47,7 @@ func (question *Question) GetIsImportant() bool {
 }
 
 func (question *Question) ResetAnsweredState() {
-	question.AnsweredState = AnsweredUnknow
+	question.AnsweredState = AnsweredUnknown
 	for _, answer := range question.Answers {
 		answer.SetIsMarked(false)
 	}

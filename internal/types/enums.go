@@ -3,7 +3,7 @@ package types
 type AnsweredState int
 
 const (
-	AnsweredUnknow AnsweredState = iota
+	AnsweredUnknown AnsweredState = iota
 	AnsweredTrue
 	AnsweredFalse
 )

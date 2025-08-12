@@ -16,6 +16,8 @@ import (
 	"github.com/SqiSch/lpic-cli/internal/repository"
 	"github.com/SqiSch/lpic-cli/internal/types"
 	"github.com/SqiSch/lpic-cli/internal/views"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func fetchQuestionByIndex(questions []*types.Question, index int) (*types.Question, error) {
@@ -140,7 +142,15 @@ func main() {
 		log.Printf("No answered questions found for certID %s: %v", *certID, err)
 	}
 
-	app := tview.NewApplication()
+	m := views.NewModel("")
+
+	p := tea.NewProgram(
+		m,
+		tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
+		tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
+	)
+
+	//fmt.Println("Welcome to the LPIC Learner!")
 
 	var questions []*types.Question
 	if *randomQuestions {
@@ -189,6 +199,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to fetch question: %v", err)
 	}
+
+	if _, err := p.Run(); err != nil {
+		fmt.Println("could not run program:", err)
+		os.Exit(1)
+	}
+
+	return
+	app := tview.NewApplication()
 
 	questionTextView := tview.NewTextView().SetText(question.Text).SetDynamicColors(true)
 	explainationView := tview.NewTextView().SetText("").SetDynamicColors(true)
@@ -324,6 +342,7 @@ func main() {
 
 	showHelp := func() {
 		helpText := "Help:\n" +
+
 			"q: Quit\n" +
 			"Enter: Mark answer\n" +
 			"Space: Mark answer\n" +
@@ -337,7 +356,7 @@ func main() {
 			"b: Unmark question as important\n" +
 			"u: reset all questions in a testset\n" +
 			"h: Show help\n" +
-			"s: Toggle Solve/Unsolve question\n"
+			"s: Solve question\n"
 		modal = tview.NewModal().
 			SetText(helpText).
 			AddButtons([]string{"Ok"}).
@@ -351,10 +370,15 @@ func main() {
 		}
 	}
 
-	toogleSolve := false
+	resetTestset := func() {
+		for _, question := range questions {
+
+			question.ResetAnsweredState()
+			rep.UpsertQuestion(ctx, question)
+		}
+	}
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-
 		switch event.Key() {
 		case tcell.KeyRune:
 			switch event.Rune() {
@@ -382,15 +406,12 @@ func main() {
 				showHelp()
 			case 'u':
 				modal := tview.NewModal().
-					SetText("Should i really reset the testset?").
+					SetText("saved as important question").
 					AddButtons([]string{"Cancel", "Back", "Reset"}).
 					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
 						if buttonLabel == "Reset" {
 							log.Println("Resetting testset")
-							for _, question := range questions {
-								question.ResetAnsweredState()
-								rep.UpsertQuestion(ctx, question)
-							}
+							resetTestset()
 						}
 						views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
 						setFirstView()
@@ -401,17 +422,12 @@ func main() {
 
 			case 'n':
 				nextQuestion()
-				toogleSolve = false
 			case 'p':
 				prevQuestion()
-				toogleSolve = false
-
 			case 's':
-				toogleSolve = !toogleSolve
-
 				// Solve the questions
 				for _, v := range questionView.GetCurrentQuestion().Answers {
-					v.SetIsMarked(toogleSolve)
+					v.SetIsMarked(true)
 					questionView.GetCurrentQuestion().SetAnsweredState(types.AnsweredFalse)
 				}
 				questionView.ShowExplanation()
