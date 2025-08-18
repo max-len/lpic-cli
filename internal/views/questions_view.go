@@ -45,7 +45,8 @@ func (r *QuestionsView) SetQuestion(question *types.Question) {
 	r.markerPosition = 0
 	r.explainationView.SetText("")
 	r.currentQuestion = question
-	r.questionTextView.SetText(fmt.Sprintf("[white]%s[-]", question.Text))
+	escapedText := tview.Escape(question.Text)
+	r.questionTextView.SetText(fmt.Sprintf("[white]%s[-]",escapedText))
 }
 
 func (r *QuestionsView) GetCurrentQuestion() *types.Question {
