@@ -123,7 +123,10 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 			radioButton = radioButtonChecked
 		}
 
-		line := fmt.Sprintf(`%s %s%s%s%s%s`, radioButton, prefix, answerStyle, textstyleStart, option.Text, textstyleStop)
+		// escape the text to avoid issues with special characters
+		escapedText := tview.Escape(option.Text)
+
+		line := fmt.Sprintf(`%s %s%s%s%s%s`, radioButton, prefix, answerStyle, textstyleStart, escapedText, textstyleStop)
 		tview.Print(screen, line, x, y+index, width, tview.AlignLeft, tcell.ColorYellow)
 	}
 
