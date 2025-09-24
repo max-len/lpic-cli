@@ -3,6 +3,8 @@ package views
 import (
 	"fmt"
 	"log"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/SqiSch/lpic-cli/internal/types"
 	"github.com/gdamore/tcell/v2"
@@ -74,21 +76,17 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 	r.Box.DrawForSubclass(screen, r)
 	x, y, width, height := r.GetInnerRect()
 
-	// if multipleAnswers > 1 use check boxes, when not use radio buttons
 	radioButtonUnchecked := "\u2610" // Unchecked.
 	radioButtonChecked := "\u2611"   // Checked.
-
 	if !r.isMultiAnswer() {
-		radioButtonUnchecked = "\u25ef" // Unchecked.
-		radioButtonChecked = "\u25c9"   // Checked.
+		radioButtonUnchecked = "\u25ef"
+		radioButtonChecked = "\u25c9"
 	}
 
 	underlinedStartStyle := "[yellow::u]"
 	underlinedStopStyle := "[-:-:-:-]"
-
 	correctAnswerStyle := "[:green]"
 	incorrectAnswerStyle := "[:red]"
-
 	viewExplaination := false
 
 	if len(r.currentQuestion.Answers) == 0 && r.currentQuestion != nil && len(r.currentQuestion.GetAnsweredOptions()) > 0 {
@@ -96,24 +94,84 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		r.currentQuestion.Answers = r.currentQuestion.GetAnsweredOptions()
 	}
 
+	// helper: word-aware wrap preserving spaces between words
+	wrap := func(text string, avail int) []string {
+		if avail <= 4 { // too narrow; avoid panic
+			return []string{text}
+		}
+		escaped := tview.Escape(text)
+		words := strings.Fields(escaped)
+		if len(words) == 0 {
+			return []string{""}
+		}
+		lines := []string{}
+		var current strings.Builder
+		curLen := 0
+		for i, w := range words {
+			wl := utf8.RuneCountInString(w)
+			sep := 0
+			if current.Len() > 0 {
+				sep = 1
+			}
+			if curLen+sep+wl <= avail {
+				if sep == 1 {
+					current.WriteByte(' ')
+					curLen++
+				}
+				current.WriteString(w)
+				curLen += wl
+			} else {
+				// flush current
+				if current.Len() > 0 {
+					lines = append(lines, current.String())
+				}
+				current.Reset()
+				curLen = 0
+				// word longer than avail: hard split
+				if wl > avail {
+					runes := []rune(w)
+					start := 0
+					for start < len(runes) {
+						end := start + avail
+						if end > len(runes) {
+							end = len(runes)
+						}
+						lines = append(lines, string(runes[start:end]))
+						start = end
+					}
+				} else {
+					current.WriteString(w)
+					curLen = wl
+				}
+			}
+			if i == len(words)-1 && current.Len() > 0 {
+				lines = append(lines, current.String())
+			}
+		}
+		return lines
+	}
+
+	drawLine := func(content string, lineY int) {
+		if lineY < height {
+			tview.Print(screen, content, x, y+lineY, width, tview.AlignLeft, tcell.ColorYellow)
+		}
+	}
+
+	visualLine := 0
 	for index, option := range r.currentQuestion.Answers {
-		if index >= height {
+		if visualLine >= height {
 			break
 		}
 		answerStyle := "[white]"
 		radioButton := radioButtonUnchecked
-
 		textstyleStart := ""
 		textstyleStop := ""
-		prefix := " "
-
+		prefixChar := " "
 		if r.markerPosition == index {
-			log.Println("marker position is", r.markerPosition, "index is", index)
 			textstyleStart = underlinedStartStyle
 			textstyleStop = underlinedStopStyle
-			prefix = "-"
+			prefixChar = "-"
 		}
-
 		if r.isOptionMarked(index) {
 			if option.IsCorrect {
 				answerStyle = correctAnswerStyle
@@ -123,12 +181,28 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 			}
 			radioButton = radioButtonChecked
 		}
-
-		// escape the text to avoid issues with special characters
-		escapedText := tview.Escape(option.Text)
-
-		line := fmt.Sprintf(`%s %s%s%s%s%s`, radioButton, prefix, answerStyle, textstyleStart, escapedText, textstyleStop)
-		tview.Print(screen, line, x, y+index, width, tview.AlignLeft, tcell.ColorYellow)
+		// Build base prefix (radio + space + prefixChar + space)
+		basePrefix := fmt.Sprintf("%s %s", radioButton, prefixChar)
+		// available width for first line text after styling markers (styles don't consume visual width but we keep simple)
+		textAvail := width - 3
+		if textAvail < 5 {
+			textAvail = width
+		}
+		wrapped := wrap(option.Text, textAvail)
+		for i, seg := range wrapped {
+			if visualLine >= height {
+				break
+			}
+			if i == 0 {
+				line := fmt.Sprintf(`%s%s%s%s%s`, basePrefix, answerStyle, textstyleStart, seg, textstyleStop)
+				drawLine(line, visualLine)
+			} else {
+				contPrefix := strings.Repeat(" ", len(basePrefix))
+				line := fmt.Sprintf(`%s%s`, contPrefix, seg)
+				drawLine(line, visualLine)
+			}
+			visualLine++
+		}
 	}
 
 	if viewExplaination {
