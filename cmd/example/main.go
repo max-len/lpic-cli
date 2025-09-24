@@ -131,7 +131,7 @@ func writeStringToScreen(screen tcell.Screen, s string) {
 			// tcell's default style is usually fine, or you could set a base style.
 			// For this simple example, just writing the character is enough
 			// as lipgloss provides the visual layout through the string structure.
-			screen.SetContent(x, y, r, nil, nil)
+			screen.SetContent(x, y, r, nil, tcell.StyleDefault)
 		}
 	}
 }
@@ -188,16 +188,10 @@ func main() {
 
 		// --- Update ---
 		// Call the Update function with the current state and the event
-		newState, changed := Update(currentState, event)
+		newState, _ := Update(currentState, event)
 
 		// Update the current state variable with the new state
 		currentState = newState
-
-		// Note: In this loop structure, we don't strictly *need* the 'changed' flag
-		// to decide whether to re-render, because we re-render on *every* loop iteration
-		// after polling an event. However, the 'changed' flag is a core part
-		// of the libgloss pattern and can be useful for optimization in more complex
-		// applications where you might skip rendering if nothing changed.
 	}
 
 	// Screen.Fini() is called automatically by defer here

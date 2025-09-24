@@ -13,6 +13,7 @@ data/
 *.nuts
 *.sqlite
 *.log
+.nutsdb/
 
 # OS / Editor junk
 .DS_Store

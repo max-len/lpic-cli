@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-
 	"os"
 
 	"github.com/gdamore/tcell/v2"
@@ -34,8 +33,6 @@ func fetchQuestionByIndex(questions []*types.Question, index int) (*types.Questi
 }
 
 func main() {
-
-	var rep repository.QuestionRepository = repository.NewNutsQuestionRepository()
 	ctx := context.Background()
 
 	// Add a flag for the database filename
@@ -50,6 +47,7 @@ func main() {
 	help := flag.Bool("help", false, "Show help")
 	h := flag.Bool("h", false, "Show help")
 	randomQuestions := flag.Bool("randomQuestions", false, "Fetch random questions from the certification set instead of a specific test set")
+	stateDir := flag.String("stateDir", "", "Directory to store persistent state (.nutsdb). If empty defaults to $HOME/.nutsdb")
 	flag.Parse()
 
 	if *help || *h {
@@ -99,6 +97,9 @@ func main() {
 		log.SetOutput(ioutil.Discard)
 		log.SetFlags(0)
 	}
+
+	// Initialize repository only after we know the stateDir flag
+	rep := repository.NewNutsQuestionRepositoryWithDir(*stateDir)
 
 	certSet, err := database.LoadDatabaseFromFile(*dbFile, *certID)
 	if err != nil {

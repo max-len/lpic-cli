@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/SqiSch/lpic-cli/internal/types"
 	"github.com/nutsdb/nutsdb"
@@ -17,25 +19,51 @@ type NutsQuestionRepository struct {
 	db *nutsdb.DB
 }
 
-func NewNutsQuestionRepository() *NutsQuestionRepository {
-
-	// Open the nutsdb database in $HOME/.nutsdb
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatalf("failed to get user home directory: %v", err)
+// NewNutsQuestionRepositoryWithDir creates a NutsDB-backed repository at the provided baseDir.
+// If baseDir is empty, $HOME is used. Data is always stored inside a directory named ".nutsdb".
+// If baseDir already ends with ".nutsdb" it is used directly; otherwise the ".nutsdb" segment is appended.
+func NewNutsQuestionRepositoryWithDir(baseDir string) *NutsQuestionRepository {
+	var resolved string
+	if strings.TrimSpace(baseDir) == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatalf("failed to get user home directory: %v", err)
+		}
+		resolved = filepath.Join(homeDir, ".nutsdb")
+	} else {
+		// Expand leading ~
+		if strings.HasPrefix(baseDir, "~") {
+			homeDir, err := os.UserHomeDir()
+			if err == nil {
+				baseDir = filepath.Join(homeDir, strings.TrimPrefix(baseDir, "~"))
+			}
+		}
+		// If the user points to an existing .nutsdb directory, keep it; else append
+		if filepath.Base(baseDir) == ".nutsdb" {
+			resolved = baseDir
+		} else {
+			resolved = filepath.Join(baseDir, ".nutsdb")
+		}
 	}
-	nutsdbPath := homeDir + "/.nutsdb"
 
-	db, err := nutsdb.Open(nutsdb.DefaultOptions, nutsdb.WithDir(nutsdbPath))
+	if err := os.MkdirAll(resolved, 0o755); err != nil {
+		log.Fatalf("failed to create nutsdb directory %s: %v", resolved, err)
+	}
+
+	db, err := nutsdb.Open(nutsdb.DefaultOptions, nutsdb.WithDir(resolved))
 	if err != nil {
-		log.Fatalf("failed to open nutsdb: %v", err)
+		log.Fatalf("failed to open nutsdb at %s: %v", resolved, err)
 	}
 
 	ensureBucketExists(db, "answered_questions")
 
-	return &NutsQuestionRepository{
-		db: db,
-	}
+	return &NutsQuestionRepository{db: db}
+}
+
+// NewNutsQuestionRepository keeps backwards compatibility with previous no-arg constructor.
+// It stores data under $HOME/.nutsdb.
+func NewNutsQuestionRepository() *NutsQuestionRepository {
+	return NewNutsQuestionRepositoryWithDir("")
 }
 
 func ensureBucketExists(db *nutsdb.DB, bucketName string) error {
