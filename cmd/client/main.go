@@ -300,11 +300,11 @@ func main() {
 			SetText(questionCount).
 			AddButtons([]string{"Ok"}).
 			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-				if err := app.SetRoot(flex, false).EnableMouse(true).Run(); err != nil {
+				if err := app.SetRoot(flex, false).Run(); err != nil {
 					panic(err)
 				}
 			})
-		if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
+		if err := app.SetRoot(modal, false).Run(); err != nil {
 			panic(err)
 		}
 	}
@@ -317,7 +317,7 @@ func main() {
 	}
 
 	setFirstView := func() {
-		if err := app.SetRoot(flex, false).EnableMouse(true).Run(); err != nil {
+		if err := app.SetRoot(flex, false).Run(); err != nil {
 			panic(err)
 		}
 	}
@@ -346,7 +346,7 @@ func main() {
 					panic(err)
 				}
 			})
-		if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
+			if err := app.SetRoot(modal, false).Run(); err != nil {
 			panic(err)
 		}
 	}
@@ -372,7 +372,7 @@ func main() {
 					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
 						setFirstView()
 					})
-				if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
+				if err := app.SetRoot(modal, false).Run(); err != nil {
 					panic(err)
 				}
 			case 'b':
@@ -395,7 +395,7 @@ func main() {
 						views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
 						setFirstView()
 					})
-				if err := app.SetRoot(modal, false).EnableMouse(true).Run(); err != nil {
+				if err := app.SetRoot(modal, false).Run(); err != nil {
 					panic(err)
 				}
 
@@ -438,7 +438,7 @@ func main() {
 		return event
 	})
 
-	if err := app.SetRoot(flex, true).EnableMouse(true).Run(); err != nil {
+	if err := app.SetRoot(flex, true).Run(); err != nil {
 		panic(err)
 	}
 }
