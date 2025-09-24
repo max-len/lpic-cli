@@ -1,1 +1,36 @@
 bin/
+
+# Confidential or local data (DO NOT COMMIT REAL QUESTION SETS)
+# Use a pattern to cover any future test data variants
+test*.json
+*.enc
+*.encrypted
+
+# Local state / databases / caches
+data/
+*.db
+*.bolt
+*.nuts
+*.sqlite
+*.log
+
+# OS / Editor junk
+.DS_Store
+*.swp
+*.swo
+*.idea/
+.vscode/
+
+# Go build artifacts
+dist/
+coverage.out
+*.test
+
+# Dependency / tooling caches (optional; usually not committed anyway)
+/.cache/
+
+# Docker / container leftovers
+*.tar
+
+# If you later generate schemas or mock datasets, keep only sanitized examples
+example_dataset.json
