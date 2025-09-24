@@ -191,14 +191,13 @@ func main() {
 	}
 
 	questionTextView := tview.NewTextView().SetText(question.Text).SetDynamicColors(true)
-	explainationView := tview.NewTextView().SetText("").SetDynamicColors(true)
+	explainationView := tview.NewTextView().SetText("").SetDynamicColors(true).SetWrap(true)
 
 	flexViewflex := tview.NewFlex().SetDirection(tview.FlexRow)
 	flexViewflex.AddItem(questionTextView, 1, 1, false)
 	questionView := views.NewQuestionsView(question.Answers, questionTextView, explainationView)
 	questionView.SetBorder(true).
-		SetTitle("Answers").
-		SetRect(0, 0, 30, 5)
+		SetTitle("Answers")
 	questionView.SetQuestion(question)
 	flexViewflex.AddItem(questionView, 0, 1, true)
 	flexViewflex.AddItem(explainationView, 0, 1, false)
@@ -238,8 +237,8 @@ func main() {
 	flex.AddItem(tview.NewBox().SetBorder(true).SetTitle("XXYYZZ"), 1, 1, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
 			AddItem(questionTextView, 0, 1, false).
-			AddItem(questionView, 0, 3, true).
-			AddItem(explainationView, 5, 1, false), 0, 2, false).
+			AddItem(questionView, 0, 2, true).
+			AddItem(explainationView, 0, 1, false), 0, 2, false).
 		AddItem(grid, 20, 1, false)
 
 	modal := tview.NewModal()
