@@ -23,7 +23,8 @@ Before running something that opens an editor (rebase -i, amend, etc.):
 * Enforce 72‑char subject rule
 * Keep diffs minimal & relevant
 * After code changes: ensure `go build ./...` passes
-* Prefer `make build` (places binary in `bin/`); plain `go build ./cmd/client` may create a stray `./client` not used in workflow
+* Always use `make build` to produce the runnable binary (ensures output in `bin/client`)
+* Avoid running plain `go build ./cmd/client` directly (may leave an unused `./client` binary)
 
 ---
 End of core conventions.
