@@ -7,54 +7,36 @@ import (
 	"github.com/rivo/tview"
 )
 
-func QuestionStateOverview(certSet []*types.Question, tview *tview.TextView, currentIndex int) {
-	index := 0
-	questionCount := ""
+// QuestionStateOverview shows a compact progress (current/total) plus aggregate statistics.
+// The per-question colored list is intentionally omitted for brevity.
+func QuestionStateOverview(certSet []*types.Question, tv *tview.TextView, currentIndex int) {
+	total := len(certSet)
+	if total == 0 {
+		tv.SetText("0 / 0").SetDynamicColors(true)
+		return
+	}
 
 	correct := 0
 	incorrect := 0
 	unknown := 0
-	total := len(certSet)
-
-	for _, question := range certSet {
-		if index == currentIndex {
-			questionCount = fmt.Sprintf("%s [yellow::b]%d[-] ", questionCount, index+1)
-			index++
-			continue
-		}
-		switch question.AnsweredState {
-		case types.AnsweredUnknown:
-			questionCount = fmt.Sprintf("%s %d ", questionCount, index+1)
-			unknown++
+	for _, q := range certSet {
+		switch q.AnsweredState {
 		case types.AnsweredTrue:
-			questionCount = fmt.Sprintf("%s [green]%d[-] ", questionCount, index+1)
 			correct++
 		case types.AnsweredFalse:
-			questionCount = fmt.Sprintf("%s [red]%d[-] ", questionCount, index+1)
 			incorrect++
-		}
-		index++
-	}
-
-	done := correct + incorrect
-	questionCount = fmt.Sprintf("%s\n\n%d / %d - [red]%d[-] / [green]%d[-] ", questionCount, done, total, incorrect, correct)
-
-	questionsLenght := len(certSet)
-	CorrectAnswered := 0
-	IncorrectAnswered := 0
-
-	for _, question := range certSet {
-		if question.AnsweredState == types.AnsweredTrue {
-			CorrectAnswered++
-		} else if question.AnsweredState == types.AnsweredFalse {
-			IncorrectAnswered++
+		default:
+			unknown++
 		}
 	}
 
-	precentageCorrect := float64(CorrectAnswered) / float64(questionsLenght) * 100
-	precentageIncorrect := float64(IncorrectAnswered) / float64(questionsLenght) * 100
-	percentageUnknown := float64(unknown) / float64(questionsLenght) * 100
-	questionCount = fmt.Sprintf("%s\n\n[red]Incorrect[-]: %d ( %.0f%%)\n[green]Correct[-]: %d ( %.0f%%)\n[white]Unknown[-]: %d ( %.0f%%)\n\n", questionCount, incorrect, precentageIncorrect, correct, precentageCorrect, unknown, percentageUnknown)
+	answered := correct + incorrect
+	pct := func(v int) float64 { return (float64(v) / float64(total)) * 100 }
 
-	tview.SetText(questionCount).SetDynamicColors(true)
+	// currentIndex is zero-based; shown as one-based
+	header := fmt.Sprintf("[yellow::b]%d / %d[-]", currentIndex+1, total)
+	stats := fmt.Sprintf("Answered: %d (%.0f%%)\n[green]Correct[-]: %d ( %.0f%% )\n[red]Incorrect[-]: %d ( %.0f%% )\n[white]Unknown[-]: %d ( %.0f%% )",
+		answered, pct(answered), correct, pct(correct), incorrect, pct(incorrect), unknown, pct(unknown))
+
+	tv.SetText(header + "\n\n" + stats).SetDynamicColors(true)
 }
