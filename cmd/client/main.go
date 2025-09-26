@@ -205,18 +205,22 @@ func main() {
 	frame2.AddItem(tview.NewButton("Next"), 1, 0, false)
 
     flex := tview.NewFlex()
-    // Right column: stats + vertical progress bar
+	// Right column: stats + vertical progress bar (half width) stacked
     textcieTest := tview.NewTextView().SetText("").SetDynamicColors(true).SetTextAlign(tview.AlignCenter).SetWrap(true)
     views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
 	progressBar := views.NewVerticalProgressBar()
 	progressBar.SetBorder(true).SetTitle("Progress")
 	progressBar.SetQuestions(questions)
+	// Half width container for the bar (bar + filler)
+	barRow := tview.NewFlex().SetDirection(tview.FlexColumn).
+		AddItem(progressBar, 0, 1, false).
+		AddItem(tview.NewBox(), 0, 1, false)
 
 	// Right side stacked: statistics (fixed height) above progress bar (fills remainder)
 	statsAndBar := tview.NewFlex().SetDirection(tview.FlexRow)
 	// Estimate stats height (header + blank + 4 lines) => 6; give a little padding
 	statsAndBar.AddItem(textcieTest, 7, 0, false)
-	statsAndBar.AddItem(progressBar, 0, 1, false)
+	statsAndBar.AddItem(barRow, 0, 1, false)
 
 	flex.AddItem(tview.NewBox().SetBorder(true).SetTitle("XXYYZZ"), 1, 1, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
