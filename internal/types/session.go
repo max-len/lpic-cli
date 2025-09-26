@@ -24,19 +24,28 @@ func (s *CertificationSession) GetFirst() int {
 }
 
 func (s *CertificationSession) GetAndIncIndex() int {
-	if s.CurrentQuestionIndex >= len(s.Testset.QuestionsIds) {
-		s.CurrentQuestionIndex = len(s.Testset.QuestionsIds) - 1
+	// Wrap to first when moving right from last
+	if len(s.Testset.QuestionsIds) == 0 {
+		s.CurrentQuestionIndex = 0
+		return 0
+	}
+	if s.CurrentQuestionIndex >= len(s.Testset.QuestionsIds)-1 {
+		s.CurrentQuestionIndex = 0
 		return s.CurrentQuestionIndex
 	}
-
 	s.CurrentQuestionIndex++
 	return s.CurrentQuestionIndex
 }
 
 func (s *CertificationSession) GetAndDecIndex() int {
-	if s.CurrentQuestionIndex <= 0 {
+	// Wrap to last when moving left from first
+	if len(s.Testset.QuestionsIds) == 0 {
 		s.CurrentQuestionIndex = 0
 		return 0
+	}
+	if s.CurrentQuestionIndex <= 0 {
+		s.CurrentQuestionIndex = len(s.Testset.QuestionsIds) - 1
+		return s.CurrentQuestionIndex
 	}
 	s.CurrentQuestionIndex--
 	return s.CurrentQuestionIndex
