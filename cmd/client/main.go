@@ -212,14 +212,18 @@ func main() {
 	progressBar.SetBorder(true).SetTitle("Progress")
 	progressBar.SetQuestions(questions)
 
-    flex.AddItem(tview.NewBox().SetBorder(true).SetTitle("XXYYZZ"), 1, 1, false).
-        AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
-            AddItem(questionTextView, 0, 1, false).
-            AddItem(questionView, 0, 2, true).
-            AddItem(explainationView, 0, 1, false), 0, 2, false).
-        AddItem(tview.NewFlex().SetDirection(tview.FlexColumn).
-            AddItem(textcieTest, 0, 6, false).
-            AddItem(progressBar, 3, 0, false), 20, 1, false)
+	// Right side stacked: statistics (fixed height) above progress bar (fills remainder)
+	statsAndBar := tview.NewFlex().SetDirection(tview.FlexRow)
+	// Estimate stats height (header + blank + 4 lines) => 6; give a little padding
+	statsAndBar.AddItem(textcieTest, 7, 0, false)
+	statsAndBar.AddItem(progressBar, 0, 1, false)
+
+	flex.AddItem(tview.NewBox().SetBorder(true).SetTitle("XXYYZZ"), 1, 1, false).
+		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+			AddItem(questionTextView, 0, 1, false).
+			AddItem(questionView, 0, 2, true).
+			AddItem(explainationView, 0, 1, false), 0, 2, false).
+		AddItem(statsAndBar, 24, 1, false)
 
 	modal := tview.NewModal()
 
