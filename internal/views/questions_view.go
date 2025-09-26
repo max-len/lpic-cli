@@ -170,7 +170,9 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		if r.markerPosition == index {
 			textstyleStart = underlinedStartStyle
 			textstyleStop = underlinedStopStyle
-			prefixChar = "-"
+			// Use a distinctive UTF-8 glyph instead of '-' to avoid confusion
+			// when an answer itself starts with a hyphen.
+			prefixChar = "❯"
 		}
 		if r.isOptionMarked(index) {
 			if option.IsCorrect {
