@@ -83,7 +83,7 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		radioButtonChecked = "\u25c9"
 	}
 
-	underlinedStartStyle := "[yellow::u]"
+	underlinedStartStyle := "[yellow::bu]" // bold + underline for current selection
 	underlinedStopStyle := "[-:-:-:-]"
 	correctAnswerStyle := "[:green]"
 	incorrectAnswerStyle := "[:red]"
