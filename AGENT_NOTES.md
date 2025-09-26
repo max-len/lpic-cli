@@ -19,7 +19,7 @@ Before running something that opens an editor (rebase -i, amend, etc.):
 * Treat `test*.json` as confidential; only derive structure if needed
 
 ## Assistant Behavior
-* After each commit: immediately `git push origin <current-branch>` (auto-push)
+* Use a single chained command for changes: `git add <files> && git commit -m "..." && git push origin <current-branch>`
 * To temporarily disable auto-push (e.g. for squashing / amend / rebase): user says "pause auto-push"; resume with "resume auto-push"
 * Never auto-push while an interactive rewrite (rebase -i, amend-in-progress) is pending
 * Enforce 72‑char subject rule
