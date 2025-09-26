@@ -65,9 +65,9 @@ func (v *VerticalProgressBar) Draw(screen tcell.Screen) {
 
     greenStyle := tcell.StyleDefault.Background(tcell.ColorGreen)
     redStyle := tcell.StyleDefault.Background(tcell.ColorRed)
-    whiteStyle := tcell.StyleDefault.Background(tcell.ColorWhite)
+    blackStyle := tcell.StyleDefault.Background(tcell.ColorBlack)
 
     drawSegment(bottomY, correctHeight, greenStyle)
     drawSegment(bottomY-correctHeight, incorrectHeight, redStyle)
-    drawSegment(bottomY-correctHeight-incorrectHeight, unknownHeight, whiteStyle)
+    drawSegment(bottomY-correctHeight-incorrectHeight, unknownHeight, blackStyle)
 }
