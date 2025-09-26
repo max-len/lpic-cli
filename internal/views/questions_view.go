@@ -157,6 +157,14 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		}
 	}
 
+	blackSpacerStyle := tcell.StyleDefault.Background(tcell.ColorBlack)
+	clearLine := func(lineY int) {
+		if lineY >= height { return }
+		for cx := 0; cx < width; cx++ {
+			screen.SetContent(x+cx, y+lineY, ' ', nil, blackSpacerStyle)
+		}
+	}
+
 	visualLine := 0
 	for index, option := range r.currentQuestion.Answers {
 		if visualLine >= height {
@@ -203,6 +211,11 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 				line := fmt.Sprintf(`%s%s`, contPrefix, seg)
 				drawLine(line, visualLine)
 			}
+			visualLine++
+		}
+		// Add a blank spacer line between answers (except after last), if room left
+		if index < len(r.currentQuestion.Answers)-1 && visualLine < height {
+			clearLine(visualLine)
 			visualLine++
 		}
 	}
