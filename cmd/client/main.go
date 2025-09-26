@@ -1,20 +1,20 @@
 package main
 
 import (
-	"context"
-	"flag"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
+    "context"
+    "flag"
+    "fmt"
+    "io/ioutil"
+    "log"
+    "os"
 
-	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
+    "github.com/gdamore/tcell/v2"
+    "github.com/rivo/tview"
 
-	"github.com/SqiSch/lpic-cli/internal/database"
-	"github.com/SqiSch/lpic-cli/internal/repository"
-	"github.com/SqiSch/lpic-cli/internal/types"
-	"github.com/SqiSch/lpic-cli/internal/views"
+    "github.com/SqiSch/lpic-cli/internal/database"
+    "github.com/SqiSch/lpic-cli/internal/repository"
+    "github.com/SqiSch/lpic-cli/internal/types"
+    "github.com/SqiSch/lpic-cli/internal/views"
 )
 
 func fetchQuestionByIndex(questions []*types.Question, index int) (*types.Question, error) {
@@ -194,53 +194,32 @@ func main() {
 	questionTextView := tview.NewTextView().SetText(question.Text).SetDynamicColors(true)
 	explainationView := tview.NewTextView().SetText("").SetDynamicColors(true).SetWrap(true)
 
-	flexViewflex := tview.NewFlex().SetDirection(tview.FlexRow)
-	flexViewflex.AddItem(questionTextView, 1, 1, false)
+	// Main question/answers/explanation area
 	questionView := views.NewQuestionsView(question.Answers, questionTextView, explainationView)
-	questionView.SetBorder(true).
-		SetTitle("Answers")
+	questionView.SetBorder(true).SetTitle("Answers")
 	questionView.SetQuestion(question)
-	flexViewflex.AddItem(questionView, 0, 1, true)
-	flexViewflex.AddItem(explainationView, 0, 1, false)
 
 	frame2 := tview.NewFlex().SetDirection(tview.FlexRow)
 	frame2.AddItem(tview.NewButton("Explain"), 1, 0, false)
 	frame2.AddItem(tview.NewButton("Solve"), 1, 0, false)
 	frame2.AddItem(tview.NewButton("Next"), 1, 0, false)
 
-	flex := tview.NewFlex()
+    flex := tview.NewFlex()
+    // Right column: stats + vertical progress bar
+    textcieTest := tview.NewTextView().SetText("").SetDynamicColors(true).SetTextAlign(tview.AlignCenter).SetWrap(true)
+    views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
+	progressBar := views.NewVerticalProgressBar()
+	progressBar.SetBorder(true).SetTitle("Progress")
+	progressBar.SetQuestions(questions)
 
-	flexBoxTest := tview.NewFlex().SetDirection(tview.FlexRow)
-
-	textcieTest := tview.NewTextView().SetText("").SetDynamicColors(true).SetTextAlign(tview.AlignCenter). // Center text within its area
-														SetWrap(true).
-														SetDynamicColors(true)
-	views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
-
-	boxTest := tview.NewBox().SetBorder(true).SetTitle("")
-	grid := tview.NewGrid().
-		SetRows(0).       // Single row, expands vertically
-		SetColumns(0).    // Single column, expands horizontally
-		SetBorders(false) // The outer grid itself doesn't need borders
-	grid.AddItem(textcieTest,
-		0,    // row 0 (same as box)
-		0,    // column 0 (same as box)
-		1,    // row span 1 (same as box)
-		1,    // column span 1 (same as box)
-		0,    // min height
-		0,    // min width
-		true, //
-	)
-
-	flexBoxTest.AddItem(boxTest, 0, 1, false)
-	flexBoxTest.AddItem(textcieTest, 0, 1, false)
-
-	flex.AddItem(tview.NewBox().SetBorder(true).SetTitle("XXYYZZ"), 1, 1, false).
-		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
-			AddItem(questionTextView, 0, 1, false).
-			AddItem(questionView, 0, 2, true).
-			AddItem(explainationView, 0, 1, false), 0, 2, false).
-		AddItem(grid, 20, 1, false)
+    flex.AddItem(tview.NewBox().SetBorder(true).SetTitle("XXYYZZ"), 1, 1, false).
+        AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+            AddItem(questionTextView, 0, 1, false).
+            AddItem(questionView, 0, 2, true).
+            AddItem(explainationView, 0, 1, false), 0, 2, false).
+        AddItem(tview.NewFlex().SetDirection(tview.FlexColumn).
+            AddItem(textcieTest, 0, 6, false).
+            AddItem(progressBar, 3, 0, false), 20, 1, false)
 
 	modal := tview.NewModal()
 
@@ -251,6 +230,7 @@ func main() {
 		}
 		questionView.SetQuestion(question)
 		views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
+		progressBar.SetQuestions(questions)
 	}
 
 	nextQuestion := func() {
@@ -260,6 +240,7 @@ func main() {
 		}
 		questionView.SetQuestion(question)
 		views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
+		progressBar.SetQuestions(questions)
 	}
 
 	showStatistics := func() {
@@ -313,6 +294,7 @@ func main() {
 		state := questionView.ToggleCurrentMarkedOption()
 		question.SetAnsweredState(state)
 		views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
+		progressBar.SetQuestions(questions)
 		rep.UpsertQuestion(ctx, question)
 	}
 
@@ -346,71 +328,58 @@ func main() {
 					panic(err)
 				}
 			})
-			if err := app.SetRoot(modal, false).Run(); err != nil {
-			panic(err)
-		}
+			if err := app.SetRoot(modal, false).Run(); err != nil { panic(err) }
 	}
 
-	toogleSolve := false
+    toogleSolve := false
 
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-
-		switch event.Key() {
-		case tcell.KeyRune:
-			switch event.Rune() {
-			case 'q':
-				app.Stop()
-			case ' ':
-				markAnswer()
-			case 'v':
-				question.SetIsImportant(true)
-				rep.UpsertQuestion(ctx, question)
-
-				modal := tview.NewModal().
-					SetText("saved as important question").
-					AddButtons([]string{"Ok"}).
-					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-						setFirstView()
-					})
-				if err := app.SetRoot(modal, false).Run(); err != nil {
-					panic(err)
-				}
-			case 'b':
-				question.SetIsImportant(false)
-				rep.UpsertQuestion(ctx, question)
-			case 'h':
-				showHelp()
-			case 'u':
-				modal := tview.NewModal().
-					SetText("Should i really reset the testset?").
-					AddButtons([]string{"Cancel", "Back", "Reset"}).
-					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-						if buttonLabel == "Reset" {
-							log.Println("Resetting testset")
-							for _, question := range questions {
-								question.ResetAnsweredState()
-								rep.UpsertQuestion(ctx, question)
-							}
-						}
-						views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
-						setFirstView()
-					})
-				if err := app.SetRoot(modal, false).Run(); err != nil {
-					panic(err)
-				}
-
-			case 'n':
-				nextQuestion()
-				toogleSolve = false
-			case 'p':
-				prevQuestion()
-				toogleSolve = false
-
-			case 's':
-				toogleSolve = !toogleSolve
-
-				// Solve the questions
-				for _, v := range questionView.GetCurrentQuestion().Answers {
+    app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+        switch event.Key() {
+        case tcell.KeyRune:
+            switch event.Rune() {
+            case 'q':
+                app.Stop()
+            case ' ':
+                markAnswer()
+            case 'v':
+                question.SetIsImportant(true)
+                rep.UpsertQuestion(ctx, question)
+                progressBar.SetQuestions(questions)
+                modal := tview.NewModal().
+                    SetText("saved as important question").
+                    AddButtons([]string{"Ok"}).
+                    SetDoneFunc(func(buttonIndex int, buttonLabel string) { setFirstView() })
+                if err := app.SetRoot(modal, false).Run(); err != nil { panic(err) }
+            case 'b':
+                question.SetIsImportant(false)
+                rep.UpsertQuestion(ctx, question)
+                progressBar.SetQuestions(questions)
+            case 'h':
+                showHelp()
+            case 'u':
+                modal := tview.NewModal().
+                    SetText("Should i really reset the testset?").
+                    AddButtons([]string{"Cancel", "Back", "Reset"}).
+                    SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+                        if buttonLabel == "Reset" {
+                            log.Println("Resetting testset")
+                            for _, question := range questions {
+                                question.ResetAnsweredState()
+                                rep.UpsertQuestion(ctx, question)
+                            }
+                            views.QuestionStateOverview(questions, textcieTest, session.GetCurrentQuestionIndex())
+                            progressBar.SetQuestions(questions)
+                        }
+                        setFirstView()
+                    })
+                if err := app.SetRoot(modal, false).Run(); err != nil { panic(err) }
+            case 'n':
+                nextQuestion(); toogleSolve = false
+            case 'p':
+                prevQuestion(); toogleSolve = false
+            case 's':
+                toogleSolve = !toogleSolve
+                for _, v := range questionView.GetCurrentQuestion().Answers {
 					v.SetIsMarked(toogleSolve)
 					questionView.GetCurrentQuestion().SetAnsweredState(types.AnsweredFalse)
 				}
