@@ -211,17 +211,10 @@ func main() {
 	progressBar := views.NewVerticalProgressBar()
 	progressBar.SetBorder(true).SetTitle("Progress")
 	progressBar.SetQuestions(questions)
-	// Centered bar: left spacer (1), bar (2), right spacer (1) => bar occupies half width and is centered
-	barRow := tview.NewFlex().SetDirection(tview.FlexColumn).
-		AddItem(tview.NewBox(), 0, 1, false).
-		AddItem(progressBar, 0, 2, false).
-		AddItem(tview.NewBox(), 0, 1, false)
-
-	// Right side stacked: statistics (fixed height) above progress bar (fills remainder)
+	// Right side stacked: statistics (fixed height) above full-width progress bar (fills remainder)
 	statsAndBar := tview.NewFlex().SetDirection(tview.FlexRow)
-	// Estimate stats height (header + blank + 4 lines) => 6; give a little padding
 	statsAndBar.AddItem(textcieTest, 7, 0, false)
-	statsAndBar.AddItem(barRow, 0, 1, false)
+	statsAndBar.AddItem(progressBar, 0, 1, false)
 
 	flex.AddItem(tview.NewBox().SetBorder(true).SetTitle("XXYYZZ"), 1, 1, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).

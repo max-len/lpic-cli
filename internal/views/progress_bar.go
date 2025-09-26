@@ -1,6 +1,8 @@
 package views
 
 import (
+    "fmt"
+
     "github.com/SqiSch/lpic-cli/internal/types"
     "github.com/gdamore/tcell/v2"
     "github.com/rivo/tview"
@@ -49,29 +51,15 @@ func (v *VerticalProgressBar) Draw(screen tcell.Screen) {
     x, y, width, height := v.GetInnerRect()
     if width <= 0 || height <= 0 { return }
 
-    // Define styles
     styleCorrect := tcell.StyleDefault.Background(tcell.ColorGreen)
     styleIncorrect := tcell.StyleDefault.Background(tcell.ColorRed)
     styleUnknown := tcell.StyleDefault.Background(tcell.ColorBlack)
+    stylePartial := styleCorrect.Dim(true)
 
     capacity := width * height
     bottomY := y + height - 1
 
-    // Helper to map linear index to serpentine coordinates (snaking)
-    toCoord := func(idx int) (int, int) {
-        row := idx / width          // 0 = first (bottom) row logically
-        col := idx % width
-        // bottom row is visual bottom
-        drawY := bottomY - row
-        // serpentine: even row left->right, odd row right->left
-        if row%2 == 1 {
-            col = width - 1 - col
-        }
-        drawX := x + col
-        return drawX, drawY
-    }
-
-    // Clear area first (unknown)
+    // Clear area to unknown
     for py := 0; py < height; py++ {
         for px := 0; px < width; px++ {
             screen.SetContent(x+px, y+py, ' ', nil, styleUnknown)
@@ -79,12 +67,13 @@ func (v *VerticalProgressBar) Draw(screen tcell.Screen) {
     }
 
     if v.total <= capacity && len(v.states) == v.total {
-        // Direct mapping: each question -> one cell
-        for qi, st := range v.states {
-            if qi >= capacity { break }
-            dx, dy := toCoord(qi)
+        for q := 0; q < v.total; q++ {
+            row := q / width
+            col := q % width
+            dy := bottomY - row
+            dx := x + col
             style := styleUnknown
-            switch st {
+            switch v.states[q] {
             case types.AnsweredTrue:
                 style = styleCorrect
             case types.AnsweredFalse:
@@ -95,51 +84,7 @@ func (v *VerticalProgressBar) Draw(screen tcell.Screen) {
         return
     }
 
-    // Half-block mode: up to 2 questions per cell using lower half block (first) then full block
-    if v.total <= capacity*2 && len(v.states) == v.total {
-        for qi, st := range v.states {
-            if qi >= capacity*2 { break }
-            cell := qi / 2
-            half := qi % 2 // 0 first (lower half), 1 second (full block after painting)
-            dx, dy := toCoord(cell)
-            existingMainRune, existingComb, existingStyle, _ := screen.GetContent(dx, dy)
-            _ = existingComb
-            // Determine style for this question
-            style := styleUnknown
-            switch st {
-            case types.AnsweredTrue:
-                style = styleCorrect
-            case types.AnsweredFalse:
-                style = styleIncorrect
-            }
-            if half == 0 { // draw lower half block if answered
-                if st == types.AnsweredTrue || st == types.AnsweredFalse {
-                    screen.SetContent(dx, dy, '▄', nil, style)
-                } // else leave unknown
-            } else { // second half; merge result
-                // Decompose existing style background
-                _, existingBg, _ := existingStyle.Decompose()
-                _, correctBg, _ := styleCorrect.Decompose()
-                _, incorrectBg, _ := styleIncorrect.Decompose()
-                secondIncorrect := st == types.AnsweredFalse
-                secondCorrect := st == types.AnsweredTrue
-                firstHalfIncorrect := existingMainRune == '▄' && existingBg == incorrectBg
-                firstHalfCorrect := existingMainRune == '▄' && existingBg == correctBg
-                firstAnsweredIncorrect := existingMainRune == '█' && existingBg == incorrectBg
-                if secondIncorrect || firstHalfIncorrect || firstAnsweredIncorrect {
-                    screen.SetContent(dx, dy, '█', nil, styleIncorrect)
-                } else if secondCorrect && (firstHalfCorrect || (existingMainRune == '█' && existingBg == correctBg)) {
-                    screen.SetContent(dx, dy, '█', nil, styleCorrect)
-                } else if secondCorrect && existingMainRune == '▄' && existingBg != correctBg {
-                    // show half correct (lower half already); keep as half block in correct color
-                    screen.SetContent(dx, dy, '▄', nil, styleCorrect)
-                } // else unanswered second half -> keep previous
-            }
-        }
-        return
-    }
-
-    // Overflow aggregation mode: more than 2x capacity
+    // Aggregated mode: map contiguous question ranges to each cell.
     for cell := 0; cell < capacity; cell++ {
         start := cell * v.total / capacity
         end := (cell + 1) * v.total / capacity
@@ -147,33 +92,40 @@ func (v *VerticalProgressBar) Draw(screen tcell.Screen) {
         if start >= end { continue }
         anyIncorrect := false
         anyCorrect := false
-        unanswered := 0
-        answered := 0
+        anyUnknown := false
         for qi := start; qi < end; qi++ {
             switch v.states[qi] {
             case types.AnsweredTrue:
                 anyCorrect = true
-                answered++
             case types.AnsweredFalse:
                 anyIncorrect = true
-                answered++
             default:
-                unanswered++
+                anyUnknown = true
             }
-            if anyIncorrect { // priority
-                break
-            }
+            if anyIncorrect { break }
         }
         style := styleUnknown
         if anyIncorrect {
             style = styleIncorrect
-        } else if anyCorrect && unanswered == 0 {
+        } else if anyCorrect && anyUnknown {
+            style = stylePartial
+        } else if anyCorrect {
             style = styleCorrect
-        } else if anyCorrect && unanswered > 0 {
-            // partial progress: dim correct
-            style = styleCorrect.Dim(true)
         }
-        dx, dy := toCoord(cell)
+        row := cell / width
+        col := cell % width
+        dy := bottomY - row
+        dx := x + col
         screen.SetContent(dx, dy, ' ', nil, style)
+    }
+
+    // Debug overlay: show capacity (number of character cells) inside bar (top-left).
+    // This updates automatically on resize because Draw is called again.
+    capStr := fmt.Sprintf("%d", capacity)
+    if height > 0 && width >= len(capStr) {
+        debugY := y // top row
+        for i, r := range capStr {
+            screen.SetContent(x+i, debugY, r, nil, tcell.StyleDefault.Foreground(tcell.ColorWhite))
+        }
     }
 }
