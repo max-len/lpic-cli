@@ -19,7 +19,9 @@ Before running something that opens an editor (rebase -i, amend, etc.):
 * Treat `test*.json` as confidential; only derive structure if needed
 
 ## Assistant Behavior
-* Do not push without an explicit request
+* After each commit: immediately `git push origin <current-branch>` (auto-push)
+* To temporarily disable auto-push (e.g. for squashing / amend / rebase): user says "pause auto-push"; resume with "resume auto-push"
+* Never auto-push while an interactive rewrite (rebase -i, amend-in-progress) is pending
 * Enforce 72‑char subject rule
 * Keep diffs minimal & relevant
 * After code changes: ensure `go build ./...` passes
