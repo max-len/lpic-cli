@@ -3,8 +3,8 @@ package views
 import (
 	"fmt"
 	"log"
-	"strings"
 	"unicode/utf8"
+	"strings"
 
 	"github.com/SqiSch/lpic-cli/internal/types"
 	"github.com/gdamore/tcell/v2"
@@ -83,7 +83,7 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		radioButtonChecked = "\u25c9"
 	}
 
-	underlinedStartStyle := "[yellow::bu]" // bold + underline for current selection
+	underlinedStartStyle := "[blue::b]" // bold only for current selection
 	underlinedStopStyle := "[-:-:-:-]"
 	correctAnswerStyle := "[:green]"
 	incorrectAnswerStyle := "[:red]"
@@ -94,68 +94,14 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		r.currentQuestion.Answers = r.currentQuestion.GetAnsweredOptions()
 	}
 
-	// helper: word-aware wrap preserving spaces between words
-	wrap := func(text string, avail int) []string {
-		if avail <= 4 { // too narrow; avoid panic
-			return []string{text}
-		}
-		escaped := tview.Escape(text)
-		words := strings.Fields(escaped)
-		if len(words) == 0 {
-			return []string{""}
-		}
-		lines := []string{}
-		var current strings.Builder
-		curLen := 0
-		for i, w := range words {
-			wl := utf8.RuneCountInString(w)
-			sep := 0
-			if current.Len() > 0 {
-				sep = 1
-			}
-			if curLen+sep+wl <= avail {
-				if sep == 1 {
-					current.WriteByte(' ')
-					curLen++
-				}
-				current.WriteString(w)
-				curLen += wl
-			} else {
-				// flush current
-				if current.Len() > 0 {
-					lines = append(lines, current.String())
-				}
-				current.Reset()
-				curLen = 0
-				// word longer than avail: hard split
-				if wl > avail {
-					runes := []rune(w)
-					start := 0
-					for start < len(runes) {
-						end := start + avail
-						if end > len(runes) {
-							end = len(runes)
-						}
-						lines = append(lines, string(runes[start:end]))
-						start = end
-					}
-				} else {
-					current.WriteString(w)
-					curLen = wl
-				}
-			}
-			if i == len(words)-1 && current.Len() > 0 {
-				lines = append(lines, current.String())
-			}
-		}
-		return lines
-	}
 
+	// helper to draw one line
 	drawLine := func(content string, lineY int) {
-		if lineY < height {
-			tview.Print(screen, content, x, y+lineY, width, tview.AlignLeft, tcell.ColorYellow)
+			if lineY < height {
+				// Fallback color white; selection styling injects [blue::bu] style tag for first line only.
+				tview.Print(screen, content, x, y+lineY, width, tview.AlignLeft, tcell.ColorWhite)
+			}
 		}
-	}
 
 	blackSpacerStyle := tcell.StyleDefault.Background(tcell.ColorBlack)
 	clearLine := func(lineY int) {
@@ -166,6 +112,71 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 	}
 
 	visualLine := 0
+	// word-wrapping helper (no style tags inside, purely visual based on runes)
+	wrapText := func(text string, width int) []string {
+		if width <= 0 {
+			return []string{""}
+		}
+		words := strings.Fields(tview.Escape(text))
+		if len(words) == 0 {
+			return []string{""}
+		}
+		lines := []string{}
+		var cur strings.Builder
+		curLen := 0
+		flush := func() {
+			if cur.Len() > 0 {
+				lines = append(lines, cur.String())
+				cur.Reset()
+				curLen = 0
+			}
+		}
+		for _, w := range words {
+			rlen := utf8.RuneCountInString(w)
+			if curLen == 0 {
+				// start new line
+				if rlen <= width {
+					cur.WriteString(w)
+					curLen = rlen
+				} else {
+					// hard split long word
+					runes := []rune(w)
+					for len(runes) > 0 {
+						space := width
+						if space > len(runes) { space = len(runes) }
+						lines = append(lines, string(runes[:space]))
+						runes = runes[space:]
+					}
+				}
+			continue
+		}
+		// need a space before next word
+		if curLen + 1 + rlen <= width {
+			cur.WriteByte(' ')
+			cur.WriteString(w)
+			curLen += 1 + rlen
+			continue
+		}
+		// flush and start new line
+		flush()
+		if rlen <= width {
+			cur.WriteString(w)
+			curLen = rlen
+		} else {
+			// hard split
+			runes := []rune(w)
+			for len(runes) > 0 {
+				space := width
+				if space > len(runes) { space = len(runes) }
+				lines = append(lines, string(runes[:space]))
+				runes = runes[space:]
+			}
+		}
+	}
+	flush()
+	return lines
+	}
+
 	for index, option := range r.currentQuestion.Answers {
 		if visualLine >= height {
 			break
@@ -174,13 +185,12 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 		radioButton := radioButtonUnchecked
 		textstyleStart := ""
 		textstyleStop := ""
-		prefixChar := " "
+		// Constant-width prefix: (radio glyph) + space + marker slot + space
+		markerChar := " "
 		if r.markerPosition == index {
 			textstyleStart = underlinedStartStyle
 			textstyleStop = underlinedStopStyle
-			// Use a distinctive UTF-8 glyph instead of '-' to avoid confusion
-			// when an answer itself starts with a hyphen.
-			prefixChar = "»"
+			markerChar = "»" // selection marker occupies same slot as blank when not selected
 		}
 		if r.isOptionMarked(index) {
 			if option.IsCorrect {
@@ -191,26 +201,19 @@ func (r *QuestionsView) Draw(screen tcell.Screen) {
 			}
 			radioButton = radioButtonChecked
 		}
-		// Build base prefix (radio + space + prefixChar + space)
-		basePrefix := fmt.Sprintf("%s %s", radioButton, prefixChar)
-		// available width for first line text after styling markers (styles don't consume visual width but we keep simple)
-		textAvail := width - 3
-		if textAvail < 5 {
-			textAvail = width
-		}
-		wrapped := wrap(option.Text, textAvail)
-		for i, seg := range wrapped {
-			if visualLine >= height {
-				break
-			}
-			if i == 0 {
-				line := fmt.Sprintf(`%s%s%s%s%s`, basePrefix, answerStyle, textstyleStart, seg, textstyleStop)
-				drawLine(line, visualLine)
-			} else {
-				contPrefix := strings.Repeat(" ", len(basePrefix))
-				line := fmt.Sprintf(`%s%s`, contPrefix, seg)
-				drawLine(line, visualLine)
-			}
+		// Build base prefix (radio + space + marker + space) ensuring fixed width for all answers
+		basePrefix := fmt.Sprintf("%s %s ", radioButton, markerChar)
+		prefixVisualWidth := utf8.RuneCountInString(basePrefix) // all runes are single width here
+		avail := width - prefixVisualWidth
+		if avail < 5 { avail = width - prefixVisualWidth } // minimal safeguard
+		segments := wrapText(option.Text, avail)
+		contPrefix := strings.Repeat(" ", prefixVisualWidth)
+		for i, seg := range segments {
+			if visualLine >= height { break }
+			prefix := basePrefix
+			if i > 0 { prefix = contPrefix }
+			styled := fmt.Sprintf("%s%s%s%s%s", prefix, answerStyle, textstyleStart, seg, textstyleStop)
+			drawLine(styled, visualLine)
 			visualLine++
 		}
 		// Add a blank spacer line between answers (except after last), if room left
